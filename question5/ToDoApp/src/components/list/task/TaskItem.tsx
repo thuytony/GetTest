@@ -1,28 +1,45 @@
 import React, { useCallback, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, TextInput, Pressable
+  View, Text, StyleSheet, Alert, Pressable, Image, TouchableOpacity
 } from 'react-native';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { Task } from '@model';
+import { ICONS } from '@assets';
 
 interface EmptyListProps {
   task: Task
-  onPressEdit: (task: Task, indexTaskEditing: number) => void
+  onPressEdit: (task: Task) => void
   onChangeCheckbox: (task: Task, isChecked: Boolean) => void
-  indexTaskEditing: number
+  onPressDelete: (task: Task) => void
 }
 
 export const TaskItem: React.FC<EmptyListProps> = (props) => {
 
-  const { task, onPressEdit, onChangeCheckbox, indexTaskEditing } = props;
+  const { task, onPressEdit, onChangeCheckbox, onPressDelete } = props;
 
   const onPressLable = useCallback(() => {
-    onPressEdit(task, indexTaskEditing);
-  }, [task, indexTaskEditing]);
+    onPressEdit(task);
+  }, [task]);
 
   const onPressCheckBox = useCallback((isChecked: boolean) => {
     onChangeCheckbox(task, isChecked);
   }, [onChangeCheckbox]);
+
+  const onPressIconDelete = useCallback(() => {
+    Alert.alert(
+      'Delete task',
+      'Are you sure you want to delete this task?',
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Yes", onPress: () => onPressDelete(task) }
+      ],
+      { cancelable: true }
+    );
+  }, [task]);
 
   const _renderLabel = useMemo(() => {
     const textDecorationLine = task.isFinish ? "line-through" : "none";
@@ -30,6 +47,14 @@ export const TaskItem: React.FC<EmptyListProps> = (props) => {
       <Pressable onPress={onPressLable}>
         <Text style={[ styles.txtTaskName, { textDecorationLine } ]}>{task.taskName}</Text>
       </Pressable>
+    )
+  }, [task]);
+
+  const _renderIconDelete = useMemo(() => {
+    return (
+      <TouchableOpacity onPress={onPressIconDelete} style={styles.wrapDelete}>
+        <Image source={ICONS.ICON_DELETE} style={styles.iconDelete}/>
+      </TouchableOpacity>
     )
   }, [task]);
 
@@ -44,7 +69,12 @@ export const TaskItem: React.FC<EmptyListProps> = (props) => {
         iconStyle={{ borderColor: task.isFinish ? "#2196F3" : "grey", borderRadius: 8, borderWidth: 2 }}
         onPress={onPressCheckBox}
       />
-      {_renderLabel}
+      <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flex: 1 }}>
+          {_renderLabel}
+        </View>
+        {task.isFinish && _renderIconDelete}
+      </View>
     </View>
   );
 
@@ -60,6 +90,14 @@ const styles = StyleSheet.create({
   txtTaskName: {
     minWidth: 8,
     paddingVertical: 24,
+  },
+  wrapDelete: {
+    padding: 8
+  },
+  iconDelete: {
+    width: 20,
+    height: 20,
+    tintColor: "red"
   },
 
 });

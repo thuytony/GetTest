@@ -7,7 +7,8 @@ import { Task } from '@model';
 interface EmptyListProps {
   tasks: Task[]
   style?: ViewStyle
-  onPressEdit: (task: Task, indexTaskEditing: number) => void
+  onPressEdit: (task: Task) => void
+  onPressDelete: (task: Task) => void
   onChangeCheckbox: (task: Task, isChecked: Boolean) => void
 }
 
@@ -26,13 +27,13 @@ export const TaskList = React.forwardRef((props: EmptyListProps, ref) => {
   };
 
   const renderItem = ({item, index}: ListRenderItemInfo<Task>) => {
-    const { onPressEdit, onChangeCheckbox } = props;
+    const { onPressEdit, onPressDelete, onChangeCheckbox } = props;
     return (
       <TaskItem
         task={item}
         onPressEdit={onPressEdit}
+        onPressDelete={onPressDelete}
         onChangeCheckbox={onChangeCheckbox}
-        indexTaskEditing={index}
       />
     );
   };
@@ -66,7 +67,6 @@ const styles = StyleSheet.create({
   seperateItem: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: 'grey',
-    // marginVertical: 16,
     marginHorizontal: 8
   },
 

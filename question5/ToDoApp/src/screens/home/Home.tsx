@@ -19,6 +19,13 @@ export const HomeScreen: React.FC<any> = (props) => {
   const onPressEdit = useCallback((task) => {
     setCurrentTaskEditting(task);
     setVisibleModalEditTask(true);
+  }, [listTask]);
+
+  const onPressDelete = useCallback((task) => {
+    setListTask(prevData => {
+      const newData = prevData.filter(i => i !== task)
+      return newData
+    })
   }, []);
 
   const onFinishEdit = useCallback((preTask, newTaskName) => {
@@ -82,6 +89,7 @@ export const HomeScreen: React.FC<any> = (props) => {
         tasks={listTask}
         style={ styles.list }
         onPressEdit={onPressEdit}
+        onPressDelete={onPressDelete}
         onChangeCheckbox={onChangeCheckbox}
       />
       <Pressable
