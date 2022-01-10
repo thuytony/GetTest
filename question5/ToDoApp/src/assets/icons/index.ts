@@ -1,0 +1,1 @@
+export const ICON_DELETE = require('./bin.png');
